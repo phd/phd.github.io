@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>Index of</title>
+    </head>
+    <body>
+        <h1 id='title'>Index of</h1>
+        <script>
+            const {
+                host, hostname, href, origin, pathname, port, protocol, search
+            } = window.location;
+            document.title += ' ' + pathname;
+            document.getElementById('title').innerText += ' ' + pathname;
+        </script>
+        <hr>
+        <table id='list' style='font-family: monospace; text-align: left;'>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Size</th>
+                <th>SHA1</th>
+            </tr>
+            <tr>
+                <td><img src="dir.svg" style="height: 2em;"/></td>
+                <td><a href="../">..</a></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <hr>
+        <script>
+            const NAME_LENGTH = 50;
+            (async () => {
+                // const response = await fetch('https://api.github.com/repos/:user/:repo/contents/');
+                const response = await fetch('https://api.github.com/repos/phd/phd.github.io/contents/');
+                const data = await response.json();
+                const list = data.sort( (a, b) => {
+                    if (a.type === 'file' && b.type === 'file') {
+                        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                    }
+                    return (a.type === 'file') ? 1 : -1;
+                });
+                console.log(list); // HACK
+                let html = '';
+                for (let file of list) {
+                    let type = (file.type === 'file') ? 'file' : 'dir';
+                    let size = (type === 'file') ? file.size : '';
+                    let hash = (type === 'file') ? file.sha : '';
+                    html += `<tr>`;
+                    html += `<td><img src="${type}.svg" style="height: 2em;"/></td>`;
+                    html += `<td><a href="${file.path}">${file.name}</a></td>`;
+                    html += `<td style="text-align: right;">${size}</td>`;
+                    html += `<td>${hash}</td>`;
+                    html += `</tr>\n`;
+                }
+                document.getElementById('list').innerHTML += html;
+            })()
+        </script>
+    </body>
+</html>
