@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <title>JS Mouse Events Tester</title>
+    <style type='text/css'>
+        body {
+            font-family: sans-serif;
+        }
+        button {
+            padding: 2em 2em 2em 2em;
+        }
+        button#Tester {
+            padding: 2em 10em 2em 10em;
+        }
+        #Output {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>JS Mouse Events Tester</h1>
+    <button id="Tester">Test Button</button>
+    <button id="Clear">Clear</button><br>
+    <br>
+    <div id="Output"></div>
+    <script>
+
+        const timestamp = function() {
+            const date = new Date();
+            return (
+                   '' + date.getFullYear()
+                + '-' + (date.getMonth() + 1).toString().padStart(2, '0')
+                + '-' + date.getDate().toString().padStart(2, '0')
+                + ' ' + date.getHours().toString().padStart(2, '0')
+                + ':' + date.getMinutes().toString().padStart(2, '0')
+                + ':' + date.getSeconds().toString().padStart(2, '0')
+                + '.' + date.getMilliseconds().toString().padStart(3, '0')
+            );
+        }
+
+        const EVENTS = [
+            'blur',
+            'click',
+            'focus',
+            'mousedown',
+            'mouseenter',
+            'mouseleave',
+            'mousemove',
+            'mouseout',
+            'mouseover',
+            'mouseup',
+        ];
+
+        const Tester = document.getElementById('Tester');
+        const Output = document.getElementById('Output');
+
+        var lastType = '';
+        const handle = function(e) {
+            const type = e.type;
+            if (type === 'mousemove' && lastType === 'mousemove') {
+                const counter = Output.querySelector('.counter');
+                const count = parseInt((counter.innerHTML || '1').replace(/[^0-9]/g, '')) + 1;
+                counter.innerHTML = ' x' + count;
+            } else {
+                Output.innerHTML = '[' + timestamp() + '] ' + e.type + '<span class="counter"></span><br>' + Output.innerHTML;
+            }
+            lastType = type;
+        }
+        for (const e of EVENTS) {
+            Tester.addEventListener(e, handle, false);
+        }
+
+        const clear = function(e) {
+            lastType = '';
+            Output.innerHTML = '';
+        }
+        Clear.addEventListener('click', clear, false);
+
+    </script>
+    </body>
+</html>
